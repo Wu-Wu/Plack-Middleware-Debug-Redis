@@ -1,3 +1,11 @@
+#
+# This file is part of Dancer-Plugin-Redis
+#
+# This software is copyright (c) 2011 by celogeek <me@celogeek.com>.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
 package FakeRedis;
 
 use strict;
@@ -9,6 +17,7 @@ use warnings;
     our $VERSION = 2;
     our $AUTOLOAD;
 
+    # faked 'INFO'
     my $INFO = {
         'redis_version'     => '0.1.99',
         'db0'               => 'keys=167,expires=145',
@@ -17,6 +26,7 @@ use warnings;
         'role'              => 'master',
     };
 
+    # faked 'KEYS'
     my $KEYS = {
         # STRING
         'coy:knows:pseudonoise:codes'       => [ 'string', 9000 ],

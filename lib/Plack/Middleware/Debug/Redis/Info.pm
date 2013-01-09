@@ -1,6 +1,7 @@
 package Plack::Middleware::Debug::Redis::Info;
 
 use strict;
+use warnings;
 use v5.10.1;
 use Redis 1.955;
 use parent 'Plack::Middleware::Debug::Base';
@@ -98,9 +99,15 @@ This module turn in to
     db1_expires => '0',
     db1_keys    => '75',
 
-=head1 OPTIONS
+=head1 METHODS
 
-This debug panel define the following options:
+=head2 prepare_app
+
+See L<Plack::Middleware::Debug>
+
+=head2 run
+
+See L<Plack::Middleware::Debug>
 
 =head2 server
 
@@ -108,7 +115,12 @@ Hostname and port of redis server instance. Default value is 'localhost:6379'.
 
 =head2 password
 
-Password to authenticate on redis server instance in case of enables redis' option B<requirepass>.
+Password to authenticate on redis server instance in case of enabled redis' option B<requirepass>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests through the web interface at
+L<https://github.com/Wu-Wu/Plack-Middleware-Debug-Redis/issues>
 
 =head1 SEE ALSO
 

@@ -4,6 +4,8 @@ MANIFEST
 README
 t/00_load.t
 t/01_info.t
+t/02_keys.t
+t/99_pod.t
 t/lib/FakeRedis.pm
 lib/Plack/Middleware/Debug/Redis.pm
 lib/Plack/Middleware/Debug/Redis/Info.pm

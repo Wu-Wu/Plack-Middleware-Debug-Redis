@@ -1,6 +1,7 @@
 package Plack::Middleware::Debug::Redis::Keys;
 
 use strict;
+use warnings;
 use v5.10.1;
 use Redis 1.955;
 use parent 'Plack::Middleware::Debug::Base';
@@ -78,13 +79,30 @@ Plack::Middleware::Debug::Redis::Keys - Redis keys debug panel
 
 =head1 DESCRIPTION
 
-Stub documentation for Plack::Middleware::Debug::Redis, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
+Plack::Middleware::Debug::Redis::Keys extends Plack::Middleware::Debug by adding redis server keys debug panel.
+Panel displays available keys in the redis database and its type.
 
-=head1 OPTIONS
+    coy:knows:pseudonoise:codes             STRING (9000)
+    six:slimy:snails:sailed:silently        LIST (35)
+    eleven:benevolent:elephants             HASH (17)
+    two:tried:and:true:tridents             SET (101)
+    tie:twine:to:three:tree:twigs           ZSET (66)
 
-This debug panel define the following options:
+Also in brackets displays key-type specific data. For I<STRING> keys it's key length in bytes; for I<HASH> - number of fields
+in a hash; for I<LIST> - length of a list (number of items); for I<SET> and I<ZSET> - number of members in a set.
+
+This panel might be added several times for different databases. Just add it again to Plack Debug panels and provide another
+database number.
+
+=head1 METHODS
+
+=head2 prepare_app
+
+See L<Plack::Middleware::Debug>
+
+=head2 run
+
+See L<Plack::Middleware::Debug>
 
 =head2 server
 
@@ -92,11 +110,16 @@ Hostname and port of redis server instance. Default value is 'localhost:6379'.
 
 =head2 password
 
-Password to authenticate on redis server instance in case of enables redis' option B<requirepass>.
+Password to authenticate on redis server instance in case of enabled redis' option B<requirepass>.
 
-=head3 db
+=head2 db
 
 Redis database number to get statistic for keys. Default value is 0.
+
+=head1 BUGS
+
+Please report any bugs or feature requests through the web interface at
+L<https://github.com/Wu-Wu/Plack-Middleware-Debug-Redis/issues>
 
 =head1 SEE ALSO
 

@@ -1,7 +1,7 @@
 package Plack::Middleware::Debug::Redis;
 
 use strict;
-use v5.10.1;
+use warnings;
 
 our $VERSION = '0.01';
 
@@ -22,7 +22,7 @@ version 0.01
     # inside your psgi app
     use Plack::Builder;
 
-    my $app = sub { [ 200, [ 'Content-Type' => 'text/html' ], [ 'OK' ] ] };
+    my $app = sub { [ 200, [ 'Content-Type' => 'text/html' ], [ '<html><body>OK</body></html>' ] ] };
     my $redis_host = 'redi.example.com:6379';
 
     builder {
@@ -41,23 +41,28 @@ version 0.01
 This distribution extends Plack::Middleware::Debug with some Redis panels. At the moment, the following panels
 available:
 
-=over
+=head1 PANELS
 
-=item B<Redis::Info>
+=head2 Redis::Info
 
 Diplay panel with generic Redis server information which is available by the command INFO.
 See L<Plack::Middleware::Debug::Redis::Info> for additional information.
 
-=item B<Redis::Keys>
+=head2 Redis::Keys
 
 Diplay panel with keys Redis server information. See L<Plack::Middleware::Debug::Redis::Keys>
 for additional information.
 
-=back
+=head1 BUGS
+
+Please report any bugs or feature requests through the web interface at
+L<https://github.com/Wu-Wu/Plack-Middleware-Debug-Redis/issues>
 
 =head1 SEE ALSO
 
-L<Plack>
+L<Plack::Middleware::Debug::Redis::Info>
+
+L<Plack::Middleware::Debug::Redis::Keys>
 
 L<Plack::Middleware::Debug>
 

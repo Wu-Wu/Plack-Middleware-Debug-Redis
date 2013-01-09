@@ -1,4 +1,5 @@
 use strict;
+use warnings;
 use Plack::Test;
 use Plack::Builder;
 use HTTP::Request::Common;
@@ -8,20 +9,18 @@ use lib File::Spec->catdir( 't', 'lib' );
 use FakeRedis;
 
 {
-    my $app = sub {
-        return [
-            200,
-            [ 'Content-Type' => 'text/html' ],
-            [ '<html><body>OK</body></html>' ]
-        ];
-    };
-
-    $app = builder {
+    my $app = builder {
         enable 'Debug',
             panels => [
                 [ 'Redis::Keys', server => 'localhost:6379', db => 0 ],
             ];
-        $app;
+        sub {
+            [
+                200,
+                [ 'Content-Type' => 'text/html' ],
+                [ '<html><body>OK</body></html>' ]
+            ];
+        };
     };
 
     test_psgi $app, sub {
