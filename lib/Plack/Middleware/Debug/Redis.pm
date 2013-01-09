@@ -22,7 +22,11 @@ version 0.01
     # inside your psgi app
     use Plack::Builder;
 
-    my $app = sub { [ 200, [ 'Content-Type' => 'text/html' ], [ '<html><body>OK</body></html>' ] ] };
+    my $app = sub {[
+        200,
+        [ 'Content-Type' => 'text/html' ],
+        [ '<html><body>OK</body></html>' ]
+    ]};
     my $redis_host = 'redi.example.com:6379';
 
     builder {
