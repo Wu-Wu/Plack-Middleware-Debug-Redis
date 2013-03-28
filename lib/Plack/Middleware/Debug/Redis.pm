@@ -4,9 +4,66 @@ package Plack::Middleware::Debug::Redis;
 
 use strict;
 use warnings;
+use Carp ();
+use Redis 1.955;
+use Plack::Util::Accessor qw/instance password db reconnect every debug encoding redis/;
 
 # VERSION
 # AUTHORITY
+
+sub redis_connect {
+    my ($self, $args) = @_;
+
+    my $croak = sub { Carp::croak $_[0] };
+
+    my %options = (
+        debug     => $self->debug     || 0,
+        reconnect => $self->reconnect || 10,
+        every     => $self->every     || 100,
+    );
+
+    $options{password} = $self->password if $self->password;
+
+    my $instance = $self->_parse_instance($self->instance);
+
+    if ($instance->{unix}) {
+        $croak->("Nonexistent redis socket ($instance->{thru})!") unless -e $instance->{thru} && -S _;
+    }
+
+    $options{ $instance->{unix} ? 'sock' : 'server' } = $instance->{thru};
+
+    $self->db($self->db || 0);
+
+    my $_handle;
+    eval { $_handle = Redis->new(%options) };
+    $croak->("Cannot get redis handle: $@") if $@;
+
+    $self->redis($_handle);
+}
+
+sub _parse_instance {
+    my ($self, $instance) = @_;
+
+    my $params = { unix => 0, thru => '127.0.0.1:6379' };
+
+    # slightly improved piece of code from Redis.pm by Pedro Melo (cpan:MELO)
+    CHANCE: {
+        last CHANCE unless $instance;
+
+        if ($instance =~ m,^(unix:)?(?<socketpath>/.+)$,i) {
+            $params->{thru} = $+{socketpath};
+            $params->{unix} = 1;
+            last CHANCE;
+        }
+        if ($instance =~ m,^((tcp|inet):)?(?<srvname>.+)$,i) {
+            my ($server, $port) = ($+{srvname}, undef);
+            ($server, $port)    = split /:/, $server;
+            $params->{thru}     = lc($server) . ':' . (($port && ($port > 0 && $port <= 65535)) ? $port : '6379');
+        }
+    }
+
+    $params;
+}
 
 1; # End of Plack::Middleware::Debug::Redis
 
@@ -53,6 +110,30 @@ See L<Plack::Middleware::Debug::Redis::Info> for additional information.
 
 Diplay panel with keys Redis server information. See L<Plack::Middleware::Debug::Redis::Keys>
 for additional information.
+
+=head1 METHODS
+
+=head2 redis_connect
+
+=head2 redis
+
+=head1 OPTIONS
+
+=head2 instance
+
+=head2 password
+
+=head2 db
+
+=head2 reconnect
+
+=head2 every
+
+=head2 debug
+
+=head2 encoding
+
+=head2
 
 =head1 BUGS
 

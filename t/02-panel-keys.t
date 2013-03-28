@@ -27,15 +27,9 @@ map { $fakeredis->mock($_, sub { &generic_len(@_) }) } qw/strlen hlen llen scard
     my $app = builder {
         enable 'Debug',
             panels => [
-                [ 'Redis::Keys', server => 'localhost:6379', db => 0 ],
+                [ 'Redis::Keys', instance => 'localhost:6379', db => 0 ],
             ];
-        sub {
-            [
-                200,
-                [ 'Content-Type' => 'text/html' ],
-                [ '<html><body>OK</body></html>' ]
-            ];
-        };
+        sub { [200, [ 'Content-Type' => 'text/html' ], [ '<html><body>OK</body></html>' ]] };
     };
 
     test_psgi $app, sub {

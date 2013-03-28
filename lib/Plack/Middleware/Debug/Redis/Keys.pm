@@ -5,28 +5,15 @@ package Plack::Middleware::Debug::Redis::Keys;
 use strict;
 use warnings;
 use feature ':5.10';
-use Redis 1.955;
-use parent 'Plack::Middleware::Debug::Base';
-use Plack::Util::Accessor qw/server password db redis_handle/;
+use parent qw(Plack::Middleware::Debug::Base Plack::Middleware::Debug::Redis);
 
 # VERSION
 # AUTHORITY
 
 sub prepare_app {
-    my $self = shift;
+    my ($self) = @_;
 
-    $self->server('localhost:6379') unless defined $self->server;
-    $self->db(0) unless defined $self->db;
-
-    my @opts = (
-        server    => $self->server,
-        reconnect => 60,
-        encoding  => undef,
-        debug     => 0,
-    );
-    push @opts, (password => $self->password) if $self->password;
-
-    $self->redis_handle(Redis->new(@opts));
+    $self->redis_connect;
 }
 
 sub run {
@@ -39,26 +26,25 @@ sub run {
         my ($res) = @_;
 
         my ($keyz, $ktype, $klen);
-        $self->redis_handle->select($self->db);
-        my @keys = $self->redis_handle->keys('*');
+        $self->redis->select($self->db);
+        my @keys = $self->redis->keys('*');
         $panel->nav_subtitle('DB #' . $self->db . ' (' . scalar(@keys) . ')');
 
         for my $key (sort @keys) {
-            $ktype = uc($self->redis_handle->type($key));
+            $ktype = uc($self->redis->type($key));
 
             given ($ktype) {
-                when ('HASH')   { $klen = $self->redis_handle->hlen($key);   }
-                when ('LIST')   { $klen = $self->redis_handle->llen($key);   }
-                when ('STRING') { $klen = $self->redis_handle->strlen($key); }
-                when ('ZSET')   { $klen = $self->redis_handle->zcard($key);  }
-                when ('SET')    { $klen = $self->redis_handle->scard($key);  }
-                default         { $klen = undef;                }
+                when ('HASH')   { $klen = $self->redis->hlen($key);   }
+                when ('LIST')   { $klen = $self->redis->llen($key);   }
+                when ('STRING') { $klen = $self->redis->strlen($key); }
+                when ('ZSET')   { $klen = $self->redis->zcard($key);  }
+                when ('SET')    { $klen = $self->redis->scard($key);  }
+                default         { $klen = undef;                      }
             }
 
             $keyz->{$key} = $ktype . ($klen ? ' (' . $klen . ')' : '');
         }
 
-        $self->redis_handle->quit;
         $panel->content($self->render_hash($keyz));
     };
 }

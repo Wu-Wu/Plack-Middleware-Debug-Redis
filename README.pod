@@ -48,6 +48,30 @@ See L<Plack::Middleware::Debug::Redis::Info> for additional information.
 Diplay panel with keys Redis server information. See L<Plack::Middleware::Debug::Redis::Keys>
 for additional information.
 
+=head1 METHODS
+
+=head2 redis_connect
+
+=head2 redis
+
+=head1 OPTIONS
+
+=head2 instance
+
+=head2 password
+
+=head2 db
+
+=head2 reconnect
+
+=head2 every
+
+=head2 debug
+
+=head2 encoding
+
+=head2
+
 =head1 BUGS
 
 Please report any bugs or feature requests through the web interface at

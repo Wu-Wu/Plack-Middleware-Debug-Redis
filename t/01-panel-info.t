@@ -23,15 +23,9 @@ $fakeredis->mock('info', sub { $INFO });
     my $app = builder {
         enable 'Debug',
             panels => [
-                [ 'Redis::Info', server => 'localhost:6379' ],
+                [ 'Redis::Info', instance => 'localhost:6379' ],
             ];
-        sub {
-            [
-                200,
-                [ 'Content-Type' => 'text/html' ],
-                [ '<html><body>OK</body></html>' ]
-            ];
-        };
+        sub { [200, [ 'Content-Type' => 'text/html' ], [ '<html><body>OK</body></html>' ]] };
     };
 
     test_psgi $app, sub {

@@ -5,27 +5,15 @@ package Plack::Middleware::Debug::Redis::Info;
 use strict;
 use warnings;
 use feature ':5.10';
-use Redis 1.955;
-use parent 'Plack::Middleware::Debug::Base';
-use Plack::Util::Accessor qw/server password redis_handle/;
+use parent qw(Plack::Middleware::Debug::Base Plack::Middleware::Debug::Redis);
 
 # VERSION
 # AUTHORITY
 
 sub prepare_app {
-    my $self = shift;
+    my ($self) = @_;
 
-    $self->server('localhost:6379') unless defined $self->server;
-
-    my @opts = (
-        server    => $self->server,
-        reconnect => 60,
-        encoding  => undef,
-        debug     => 0,
-    );
-    push @opts, (password => $self->password) if $self->password;
-
-    $self->redis_handle(Redis->new(@opts));
+    $self->redis_connect;
 }
 
 sub run {
@@ -34,7 +22,7 @@ sub run {
     $panel->title('Redis::Info');
     $panel->nav_title($panel->title);
 
-    my $info = $self->redis_handle->info;
+    my $info = $self->redis->info;
 
     # tweak db keys
     foreach my $db (grep { /^db\d{1,2}/ } keys %$info) {
@@ -103,6 +91,10 @@ See L<Plack::Middleware::Debug>
 =head2 run
 
 See L<Plack::Middleware::Debug>
+
+=head2 redis
+
+=head2 flatten_db
 
 =head2 server
 
