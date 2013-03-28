@@ -1,13 +1,16 @@
 package Plack::Middleware::Debug::Redis::Keys;
 
+# ABSTRACT: Redis keys debug panel
+
 use strict;
 use warnings;
-use v5.10.1;
+use feature ':5.10';
 use Redis 1.955;
 use parent 'Plack::Middleware::Debug::Base';
 use Plack::Util::Accessor qw/server password db redis_handle/;
 
-our $VERSION = '0.01';
+# VERSION
+# AUTHORITY
 
 sub prepare_app {
     my $self = shift;
@@ -61,13 +64,10 @@ sub run {
 }
 
 1; # End of Plack::Middleware::Debug::Redis::Keys
+
 __END__
 
 =pod
-
-=head1 NAME
-
-Plack::Middleware::Debug::Redis::Keys - Redis keys debug panel
 
 =head1 SYNOPSIS
 
@@ -126,16 +126,5 @@ L<https://github.com/Wu-Wu/Plack-Middleware-Debug-Redis/issues>
 L<Plack::Middleware::Debug>
 
 L<Redis>
-
-=head1 AUTHOR
-
-Anton Gerasimov, E<lt>chim@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2013 by Anton Gerasimov
-
-This library is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut

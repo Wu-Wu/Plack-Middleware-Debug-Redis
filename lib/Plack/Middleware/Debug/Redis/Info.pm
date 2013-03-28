@@ -1,13 +1,16 @@
 package Plack::Middleware::Debug::Redis::Info;
 
+# ABSTRACT: Redis info debug panel
+
 use strict;
 use warnings;
-use v5.10.1;
+use feature ':5.10';
 use Redis 1.955;
 use parent 'Plack::Middleware::Debug::Base';
 use Plack::Util::Accessor qw/server password redis_handle/;
 
-our $VERSION = '0.01';
+# VERSION
+# AUTHORITY
 
 sub prepare_app {
     my $self = shift;
@@ -61,19 +64,11 @@ sub flatten_db {
     \%flatten;
 }
 
-
 1; # End of Plack::Middleware::Debug::Redis::Info
+
 __END__
 
 =pod
-
-=head1 NAME
-
-Plack::Middleware::Debug::Redis::Info - Redis info debug panel
-
-=head1 VERSION
-
-version 0.01
 
 =head1 SYNOPSIS
 
@@ -127,16 +122,5 @@ L<https://github.com/Wu-Wu/Plack-Middleware-Debug-Redis/issues>
 L<Plack::Middleware::Debug>
 
 L<Redis>
-
-=head1 AUTHOR
-
-Anton Gerasimov, E<lt>chim@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2013 by Anton Gerasimov
-
-This library is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut
