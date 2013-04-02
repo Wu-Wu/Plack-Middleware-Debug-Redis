@@ -1,6 +1,7 @@
 Revision history for Perl extension Plack::Middleware::Debug::Redis.
 
 {{$NEXT}}
+    - tests were refactored
     - dzillify distribution
 
 0.02  Mon Jan 14 05:35:26 2013

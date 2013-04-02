@@ -4,72 +4,49 @@ use Plack::Test;
 use Plack::Builder;
 use HTTP::Request::Common;
 use Test::More;
-use Test::MockObject;
+use t::lib::FakeRedis;
 
-my $INFO = {
-    'redis_version'     => '0.1.99',
-    'db0'               => 'keys=167,expires=145',
-    'db1'               => 'keys=75,expires=0',
-    'uptime_in_seconds' => '1591647',
-    'role'              => 'master',
+t::lib::FakeRedis->run;
+
+my $app = builder {
+    enable 'Debug',
+        panels => [
+            [ 'Redis::Info', instance => 'localhost:6379' ],
+        ];
+    sub { [200, [ 'Content-Type' => 'text/html' ], [ '<html><body>OK</body></html>' ]] };
 };
 
-my $fakeredis = Test::MockObject->new;
-Test::MockObject->fake_module('Redis', new => sub { $fakeredis }, VERSION => sub { '1.955' });
-$fakeredis->set_true('select', 'quit', 'ping');
-$fakeredis->mock('info', sub { $INFO });
+my @content_bundle = (
+    db0_keys            =>                    167, 'total keys in db0',
+    db0_expires         =>                    145, 'expires keys in db0',
+    db1_keys            =>                     75, 'total keys in db1',
+    db1_expires         =>                      0, 'expires keys in db1',
+    redis_version       => '\d\.\d{1,2}\.\d{1,2}', 'redis server version',
+    uptime_in_seconds   =>                1591647, 'redis server uptime',
+    role                =>               'master', 'redis server role',
+    os                  =>      'Free.*\d\.\d-.*', 'run under os',
+    run_id              =>         '[a-f0-9]{40}', 'match run_id',
+    used_cpu_sys        =>            '\d\.\d{2}', 'match sys cpu usage',
+    used_cpu_user       =>            '\d\.\d{2}', 'match user cpu usage',
+);
 
-{
-    my $app = builder {
-        enable 'Debug',
-            panels => [
-                [ 'Redis::Info', instance => 'localhost:6379' ],
-            ];
-        sub { [200, [ 'Content-Type' => 'text/html' ], [ '<html><body>OK</body></html>' ]] };
-    };
+test_psgi $app, sub {
+    my ($cb) = @_;
 
-    test_psgi $app, sub {
-        my ($cb) = @_;
+    my $res = $cb->(GET '/');
+    is $res->code, 200, 'response code 200';
 
-        my $res = $cb->(GET '/');
-        is $res->code, 200, 'Redis-Info: response code 200';
+    like $res->content,
+        qr|<a href="#" title="Redis::Info" class="plDebugInfo\d+Panel">|m,
+        'panel found';
 
-        like $res->content,
-            qr|<a href="#" title="Redis::Info" class="plDebugInfo\d+Panel">|m,
-            'Redis-Info: panel found';
+    like $res->content,
+        qr|<small>Version: \d\.\d{1,2}\.\d{1,2}</small>|,
+        'subtitle points to redis version';
 
-        like $res->content,
-            qr|<small>Version: \d\.\d{1,2}\.\d{1,2}</small>|,
-            'Redis-Info: subtitle points to redis version';
-
-        like $res->content,
-            qr|<td>db0_expires</td>[.\s\n\r]*<td>145</td>|m,
-            'Redis-Info: 145 expires keys in db0';
-
-        like $res->content,
-            qr|<td>db0_keys</td>[.\s\n\r]*<td>167</td>|m,
-            'Redis-Info: 167 total keys in db0';
-
-        like $res->content,
-            qr|<td>db1_expires</td>[.\s\n\r]*<td>0</td>|m,
-            'Redis-Info: 0 expires keys in db1';
-
-        like $res->content,
-            qr|<td>db1_keys</td>[.\s\n\r]*<td>75</td>|m,
-            'Redis-Info: 75 total keys in db1';
-
-        like $res->content,
-            qr|<td>redis_version</td>[.\s\n\r]*<td>\d\.\d{1,2}\.\d{1,2}</td>|m,
-            'Redis-Info: Redis version presented';
-
-        like $res->content,
-            qr|<td>uptime_in_seconds</td>[.\s\n\r]*<td>1591647</td>|m,
-            'Redis-Info: server uptime match';
-
-        like $res->content,
-            qr|<td>role</td>[.\s\n\r]*<td>master</td>|m,
-            'Redis-Info: server role match';
-    };
-}
+    while (my ($metric, $expected, $description) = splice(@content_bundle, 0, 3)) {
+        like $res->content, qr|<td>$metric</td>[.\s\n\r]*<td>$expected</td>|m, $description;
+    }
+};
 
 done_testing();
