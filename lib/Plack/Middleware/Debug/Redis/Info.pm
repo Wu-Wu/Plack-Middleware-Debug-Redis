@@ -4,7 +4,6 @@ package Plack::Middleware::Debug::Redis::Info;
 
 use strict;
 use warnings;
-use feature ':5.10';
 use parent qw(Plack::Middleware::Debug::Base Plack::Middleware::Debug::Redis);
 
 # VERSION

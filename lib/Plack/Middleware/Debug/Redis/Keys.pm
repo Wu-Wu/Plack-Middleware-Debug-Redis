@@ -4,7 +4,6 @@ package Plack::Middleware::Debug::Redis::Keys;
 
 use strict;
 use warnings;
-use feature ':5.10';
 use parent qw(Plack::Middleware::Debug::Base Plack::Middleware::Debug::Redis);
 
 # VERSION
@@ -22,6 +21,14 @@ sub run {
     $panel->title('Redis::Keys');
     $panel->nav_title($panel->title);
 
+    my %measure = (
+        'HASH'   => 'hlen',
+        'LIST'   => 'llen',
+        'STRING' => 'strlen',
+        'ZSET'   => 'zcard',
+        'SET'    => 'scard',
+    );
+
     return sub {
         my ($res) = @_;
 
@@ -33,14 +40,9 @@ sub run {
         for my $key (sort @keys) {
             $ktype = uc($self->redis->type($key));
 
-            given ($ktype) {
-                when ('HASH')   { $klen = $self->redis->hlen($key);   }
-                when ('LIST')   { $klen = $self->redis->llen($key);   }
-                when ('STRING') { $klen = $self->redis->strlen($key); }
-                when ('ZSET')   { $klen = $self->redis->zcard($key);  }
-                when ('SET')    { $klen = $self->redis->scard($key);  }
-                default         { $klen = undef;                      }
-            }
+            my $method = exists $measure{$ktype} ? $measure{$ktype} : undef;
+
+            $klen = $method ? $self->redis->$method($key) : undef;
 
             $keyz->{$key} = $ktype . ($klen ? ' (' . $klen . ')' : '');
         }
