@@ -60,7 +60,7 @@ __END__
     # inside your psgi app
     enable 'Debug',
         panels => [
-            [ 'Redis::Keys', server => 'redis.example.com:6379', db => 3 ],
+            [ 'Redis::Keys', instance => 'redis.example.com:6379', db => 3 ],
         ];
 
 =head1 DESCRIPTION
@@ -90,17 +90,13 @@ See L<Plack::Middleware::Debug>
 
 See L<Plack::Middleware::Debug>
 
-=head2 server
+=head2 redis_connect
 
-Hostname and port of redis server instance. Default value is 'localhost:6379'.
+See L<Plack::Middleware::Debug::Redis>
 
-=head2 password
+=head2 redis
 
-Password to authenticate on redis server instance in case of enabled redis' option B<requirepass>.
-
-=head2 db
-
-Redis database number to get statistic for keys. Default value is 0.
+See L<Plack::Middleware::Debug::Redis>
 
 =head1 BUGS
 
@@ -108,6 +104,8 @@ Please report any bugs or feature requests through the web interface at
 L<https://github.com/Wu-Wu/Plack-Middleware-Debug-Redis/issues>
 
 =head1 SEE ALSO
+
+L<Plack::Middleware::Debug::Redis>
 
 L<Plack::Middleware::Debug>
 

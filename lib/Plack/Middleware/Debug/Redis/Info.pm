@@ -63,7 +63,7 @@ __END__
     # inside your psgi app
     enable 'Debug',
         panels => [
-            [ 'Redis::Info', server => 'redis.example.com:6379' ],
+            [ 'Redis::Info', instance => 'redis.example.com:6379' ],
         ];
 
 =head1 DESCRIPTION
@@ -92,17 +92,17 @@ See L<Plack::Middleware::Debug>
 
 See L<Plack::Middleware::Debug>
 
+=head2 redis_connect
+
+See L<Plack::Middleware::Debug::Redis>
+
 =head2 redis
+
+See L<Plack::Middleware::Debug::Redis>
 
 =head2 flatten_db
 
-=head2 server
-
-Hostname and port of redis server instance. Default value is 'localhost:6379'.
-
-=head2 password
-
-Password to authenticate on redis server instance in case of enabled redis' option B<requirepass>.
+Flatten some complex data structures got from redis' INFO command. At the moment this is keys' composition of the database.
 
 =head1 BUGS
 
@@ -110,6 +110,8 @@ Please report any bugs or feature requests through the web interface at
 L<https://github.com/Wu-Wu/Plack-Middleware-Debug-Redis/issues>
 
 =head1 SEE ALSO
+
+L<Plack::Middleware::Debug::Redis>
 
 L<Plack::Middleware::Debug>
 
