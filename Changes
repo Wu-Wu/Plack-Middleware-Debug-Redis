@@ -1,6 +1,8 @@
 Revision history for Perl extension Plack::Middleware::Debug::Redis.
 
 {{$NEXT}}
+
+0.03    Thu Jun 20 21:13:08 2013 +0000
     - set minimum perl version to 5.8.8
     - update documentation
     - tests were refactored
